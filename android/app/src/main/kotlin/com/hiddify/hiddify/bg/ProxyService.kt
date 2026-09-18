@@ -7,6 +7,7 @@ import com.hiddify.core.libbox.Notification
 class ProxyService :
     Service(),
     PlatformInterfaceWrapper {
+    
     private val service = BoxService(this, this)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int) = service.onStartCommand()
@@ -17,7 +18,7 @@ class ProxyService :
 
     override fun sendNotification(notification: Notification) = service.sendNotification(notification)
 
-    // 👇 ЭТОТ МЕТОД ДОБАВЛЕН, ЧТОБЫ ИСПРАВИТЬ ОШИБКУ КОМПИЛЯЦИИ 👇
+    // 👇 ДОБАВЛЕНО: исправляет ошибку компиляции
     override fun closeNeighborMonitor() {
         // Пустая реализация для удовлетворения требований интерфейса
     }
