@@ -9,6 +9,7 @@ import android.net.VpnService
 import android.os.Build
 import android.os.IBinder
 import android.os.ParcelFileDescriptor
+import com.hiddify.core.libbox.NeighborUpdateListener // 👈 ДОБАВЛЕНО
 import com.hiddify.core.libbox.Notification
 import com.hiddify.hiddify.constant.PerAppProxyMode
 import com.hiddify.hiddify.ktx.toIpPrefix
@@ -92,8 +93,7 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
         }
 
         val builder = Builder()
-            // 👇 ИЗМЕНЕНО: теперь в уведомлениях Android будет CloudNode
-            .setSession("CloudNode")
+            .setSession("CloudNode") // CloudNode вместо hiddify
             .setMtu(options.mtu)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -113,8 +113,8 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
         }
 
         if (options.autoRoute) {
-            // 👇 ИЗМЕНЕНО: убрано .value, которое ломало сборку
-            builder.addDnsServer(options.dnsServerAddress)
+            // 👇 ИСПРАВЛЕНО: добавлено .toString(), так как компилятор требует String
+            builder.addDnsServer(options.dnsServerAddress.toString())
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val inet4RouteAddress = options.inet4RouteAddress
@@ -214,8 +214,8 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
         // service.sendNotification(notification)
     }
 
-    // 👇 ДОБАВЛЕНО: исправляет ошибку компиляции
-    override fun closeNeighborMonitor() {
-        // Пустая реализация для удовлетворения требований интерфейса
+    // 👇 ИСПРАВЛЕНО: добавлен параметр listener, как требует компилятор
+    override fun closeNeighborMonitor(listener: NeighborUpdateListener?) {
+        // Пустая реализация
     }
 }
