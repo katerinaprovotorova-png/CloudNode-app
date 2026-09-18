@@ -16,4 +16,9 @@ class ProxyService :
     override fun onDestroy() = service.onDestroy()
 
     override fun sendNotification(notification: Notification) = service.sendNotification(notification)
+
+    // 👇 ЭТОТ МЕТОД ДОБАВЛЕН, ЧТОБЫ ИСПРАВИТЬ ОШИБКУ КОМПИЛЯЦИИ 👇
+    override fun closeNeighborMonitor() {
+        // Пустая реализация для удовлетворения требований интерфейса
+    }
 }
