@@ -1,7 +1,7 @@
 name: Build CloudNode APK
 
 on:
-  workflow_dispatch: # Позволяет запускать вручную по кнопке
+  workflow_dispatch:
 
 jobs:
   build-android-apk:
@@ -24,6 +24,12 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Generate code (Build Runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Generate translations
+        run: dart run slang
 
       - name: Build Debug APK
         run: flutter build apk --debug --android-skip-build-dependency-validation
