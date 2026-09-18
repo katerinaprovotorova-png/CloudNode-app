@@ -8,25 +8,22 @@ import android.os.Process
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.hiddify.hiddify.Application
+import com.hiddify.core.libbox.ConnectionOwner
 import com.hiddify.core.libbox.InterfaceUpdateListener
 import com.hiddify.core.libbox.Libbox
+import com.hiddify.core.libbox.LocalDNSTransport
+import com.hiddify.core.libbox.NeighborUpdateListener // 👈 ДОБАВЛЕНО
 import com.hiddify.core.libbox.NetworkInterfaceIterator
 import com.hiddify.core.libbox.PlatformInterface
 import com.hiddify.core.libbox.StringIterator
 import com.hiddify.core.libbox.TunOptions
 import com.hiddify.core.libbox.WIFIState
+import com.hiddify.core.libbox.NetworkInterface as LibboxNetworkInterface
+import android.system.OsConstants
 import java.net.Inet6Address
 import java.net.InetSocketAddress
 import java.net.InterfaceAddress
 import java.net.NetworkInterface
-import java.util.Enumeration
-import com.hiddify.core.libbox.NetworkInterface as LibboxNetworkInterface
-
-
-
-import android.system.OsConstants
-import com.hiddify.core.libbox.ConnectionOwner
-import com.hiddify.core.libbox.LocalDNSTransport
 import java.security.KeyStore
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -41,7 +38,7 @@ interface PlatformInterfaceWrapper : PlatformInterface {
         error("invalid argument")
     }
 
-    override fun useProcFS(): Boolean =  Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+    override fun useProcFS(): Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun findConnectionOwner(
@@ -58,14 +55,14 @@ interface PlatformInterfaceWrapper : PlatformInterface {
                     InetSocketAddress(sourceAddress, sourcePort),
                     InetSocketAddress(destinationAddress, destinationPort),
                 )
-//            if (uid == Process.INVALID_UID)error("android: connection owner not found")
 
             val owner = ConnectionOwner()
             owner.userId = uid
-            if (uid!=Process.INVALID_UID) {
+            if (uid != Process.INVALID_UID) {
                 val packages = Application.packageManager.getPackagesForUid(uid)
                 owner.userName = packages?.firstOrNull() ?: ""
-                owner.packageName = owner.userName
+                // 👇 ИСПРАВЛЕНО: эта строка вызывала ошибку "Unresolved reference 'packageName'", мы её закомментировали
+                // owner.packageName = owner.userName 
             }
             return owner
         } catch (e: Exception) {
@@ -81,6 +78,11 @@ interface PlatformInterfaceWrapper : PlatformInterface {
 
     override fun closeDefaultInterfaceMonitor(listener: InterfaceUpdateListener) {
         DefaultNetworkMonitor.setListener(null)
+    }
+
+    // 👇 ДОБАВЛЕНО: исправляет ошибку "does not implement abstract member 'closeNeighborMonitor'"
+    override fun closeNeighborMonitor(listener: NeighborUpdateListener?) {
+        // Пустая реализация для удовлетворения требований интерфейса
     }
 
     override fun getInterfaces(): NetworkInterfaceIterator {
