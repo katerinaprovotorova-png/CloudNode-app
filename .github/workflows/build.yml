@@ -249,7 +249,12 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
-          make ${{ matrix.platform }}-release
+          if [ "${{ matrix.platform }}" == "android-apk" ]; then
+            echo "Building Android Debug APK (more stable for forks)"
+            flutter build apk --debug
+          else
+            make ${{ matrix.platform }}-release
+          fi
 
       - name: Code Sign
         if: ${{ inputs.upload-artifact && startsWith(matrix.platform,'windows') }}
@@ -301,12 +306,10 @@ jobs:
       - name: Copy to out Android APK
         if: matrix.platform == 'android-apk'
         run: |
-          mkdir out
-          ls -R ./build/app/outputs
-          cp ./build/app/outputs/flutter-apk/*arm64-v8a*.apk out/${TARGET_NAME_apk}-arm64.apk || echo "no arm64 apk"
-          cp ./build/app/outputs/flutter-apk/*armeabi-v7a*.apk out/${TARGET_NAME_apk}-arm7.apk || echo "no arm7 apk"
-          cp ./build/app/outputs/flutter-apk/*x86_64*.apk out/${TARGET_NAME_apk}-x86_64.apk || echo "no x64 apk"
-          cp ./build/app/outputs/flutter-apk/app-release.apk out/${TARGET_NAME_apk}-universal.apk || echo "no universal apk"
+          mkdir -p out
+          ls -R ./build/app/outputs/flutter-apk/
+          # Копируем все собранные APK (включая debug)
+          cp ./build/app/outputs/flutter-apk/*.apk out/ || echo "no apk found"
 
       - name: Copy to out Android AAB
         if: matrix.platform == 'android-aab'
