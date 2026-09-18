@@ -54,6 +54,7 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
 
     var systemProxyAvailable = false
     var systemProxyEnabled = false
+    
     fun addIncludePackage(builder: Builder, packageName: String) {
         if (packageName == this.packageName) { 
             Log.d("VpnService","Cannot include myself: $packageName")
@@ -88,11 +89,11 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
 
         if (!hasPermission) {
              error("android: missing vpn permission")
-    }
-//        service.fileDescriptor?.close()
+        }
 
         val builder = Builder()
-            .setSession("hiddify")
+            // 👇 ИЗМЕНЕНО: теперь в уведомлениях Android будет CloudNode
+            .setSession("CloudNode")
             .setMtu(options.mtu)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -112,7 +113,8 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
         }
 
         if (options.autoRoute) {
-            builder.addDnsServer(options.dnsServerAddress.value)
+            // 👇 ИЗМЕНЕНО: убрано .value, которое ломало сборку
+            builder.addDnsServer(options.dnsServerAddress)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val inet4RouteAddress = options.inet4RouteAddress
@@ -166,7 +168,6 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
                     appList.forEach {
                         addIncludePackage(builder,it)
                     }
-//                    addIncludePackage(builder,packageName)
                 } else {
                     appList.forEach {
                         addExcludePackage(builder,it)
@@ -179,18 +180,15 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
                     while (includePackage.hasNext()) {
                         addIncludePackage(builder,includePackage.next())
                     }
-                    //                    addIncludePackage(builder,packageName)
-                }else {
+                } else {
                     val excludePackage = options.excludePackage
                     if (excludePackage.hasNext()) {
                         while (excludePackage.hasNext()) {
                             addExcludePackage(builder, excludePackage.next())
                         }
                     }
-
                     addExcludePackage(builder, packageName)
                 }
-                
             }
         }
 
@@ -212,9 +210,12 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
         return pfd.fd
     }
 
-//    override fun writeLog(message: String) = service.writeLog(message)
-
     override fun sendNotification(notification: Notification) {
-//        service.sendNotification(notification)
+        // service.sendNotification(notification)
+    }
+
+    // 👇 ДОБАВЛЕНО: исправляет ошибку компиляции
+    override fun closeNeighborMonitor() {
+        // Пустая реализация для удовлетворения требований интерфейса
     }
 }
