@@ -245,16 +245,17 @@ jobs:
           make ${{ matrix.platform }}-prepare
 
 
-      - name: Build ${{ matrix.platform }}
+      - name: Build Android APK (Debug)
+        if: matrix.platform == 'android-apk'
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-        run: |
-          if [ "${{ matrix.platform }}" == "android-apk" ]; then
-            echo "Building Android Debug APK (more stable for forks)"
-            flutter build apk --debug
-          else
-            make ${{ matrix.platform }}-release
-          fi
+        run: flutter build apk --debug
+
+      - name: Build Other Platforms (Release)
+        if: matrix.platform != 'android-apk'
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        run: make ${{ matrix.platform }}-release
 
       - name: Code Sign
         if: ${{ inputs.upload-artifact && startsWith(matrix.platform,'windows') }}
