@@ -7,7 +7,6 @@ import 'package:hiddify/core/utils/ip_utils.dart';
 import 'package:hiddify/gen/fonts.gen.dart';
 import 'package:hiddify/utils/riverpod_utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import "package:simple_icons/simple_icons.dart";
 
 final _showIp = StateProvider.autoDispose((ref) {
   ref.disposeDelay(const Duration(seconds: 20));
@@ -126,11 +125,10 @@ class IPCountryFlag extends HookConsumerWidget {
                   alignment: Alignment.center,
                   children: [
                     CircleFlag(
-                      // key: ValueKey(countryCode),
                       countryCode!.toLowerCase() == "ir" ? "ir-shir" : countryCode!,
                       size: size - 8,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Rounded effect
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     if (organization != null)
@@ -156,18 +154,19 @@ class OrgIconData {
 }
 
 // Map of organization keywords to icon and color
+// ИСПРАВЛЕНО: Используем стандартные иконки Flutter, чтобы избежать ошибок версий simple_icons
 const Map<String, OrgIconData> organizationData = {
-  "cloudflare": OrgIconData(SimpleIcons.cloudflare, SimpleIconColors.cloudflare),
-  "hetzner": OrgIconData(SimpleIcons.hetzner, SimpleIconColors.hetzner),
-  "ovh": OrgIconData(SimpleIcons.ovh, SimpleIconColors.ovh),
-  "azure": OrgIconData(SimpleIcons.microsoft, SimpleIconColors.microsoft),
-  "amazon": OrgIconData(SimpleIcons.amazon, SimpleIconColors.amazon),
-  "oracle": OrgIconData(SimpleIcons.linux, SimpleIconColors.linux),
-  "fastly": OrgIconData(SimpleIcons.fastly, SimpleIconColors.fastly),
-  "digitalocean": OrgIconData(SimpleIcons.digitalocean, SimpleIconColors.digitalocean),
-  "alibaba": OrgIconData(SimpleIcons.alibabacloud, SimpleIconColors.alibabacloud),
-  "google": OrgIconData(SimpleIcons.googlecloud, SimpleIconColors.googlecloud),
-  "starlink": OrgIconData(SimpleIcons.satellite, SimpleIconColors.satellite),
+  "cloudflare": OrgIconData(Icons.cloud, Colors.orange),
+  "hetzner": OrgIconData(Icons.computer, Colors.deepOrange),
+  "ovh": OrgIconData(Icons.server, Colors.blue),
+  "azure": OrgIconData(Icons.cloud, Colors.blue),
+  "amazon": OrgIconData(Icons.shopping_cart, Colors.amber),
+  "oracle": OrgIconData(Icons.business, Colors.red),
+  "fastly": OrgIconData(Icons.speed, Colors.red),
+  "digitalocean": OrgIconData(Icons.waves, Colors.blue),
+  "alibaba": OrgIconData(Icons.shopping_bag, Colors.orange),
+  "google": OrgIconData(Icons.g_mobiledata, Colors.blue),
+  "starlink": OrgIconData(Icons.satellite_alt, Colors.grey),
 };
 
 class OrganisationFlag extends HookConsumerWidget {
@@ -176,7 +175,6 @@ class OrganisationFlag extends HookConsumerWidget {
   final String organization;
   final double size;
 
-  // Function to create flag widget with icon and color
   Widget getFlagWidget({
     required Widget widget,
     required String organization,
@@ -189,9 +187,7 @@ class OrganisationFlag extends HookConsumerWidget {
       child: Container(
         width: size,
         height: size,
-
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(100)),
-        // padding: const ,
         child: widget,
       ),
     );
@@ -212,7 +208,6 @@ class OrganisationFlag extends HookConsumerWidget {
       }
     }
 
-    // Return empty widget if no match is found
     return const SizedBox.shrink();
   }
 }
