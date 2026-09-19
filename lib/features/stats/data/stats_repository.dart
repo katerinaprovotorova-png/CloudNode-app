@@ -16,6 +16,6 @@ class StatsRepositoryImpl with ExceptionHandler, InfraLogger implements StatsRep
 
   @override
   Stream<Either<StatsFailure, SystemInfo>> watchStats() {
-   return singbox.watchStats().handleExceptions(StatsFailure.unexpected.new);
+return singbox.watchStats().handleExceptions((e, s) => StatsFailure.unexpected(e, s));
   }
 }
