@@ -27,8 +27,16 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate translations only
+      - name: Generate translations
         run: dart run slang
+
+      - name: Download Android Core Libraries (CRITICAL FIX)
+        run: |
+          mkdir -p android/app/libs
+          # Скачиваем последнюю версию нативных библиотек ядра
+          LATEST_URL=$(curl -s https://api.github.com/repos/hiddify/hiddify-core/releases/latest | grep "browser_download_url.*hiddify-core-android.tar.gz" | cut -d '"' -f 4)
+          echo "Downloading core libraries from: $LATEST_URL"
+          curl -L "$LATEST_URL" | tar xz -C android/app/libs/
 
       - name: Build Debug APK
         run: flutter build apk --debug --android-skip-build-dependency-validation
