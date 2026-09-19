@@ -39,7 +39,7 @@ jobs:
         run: dart run slang
 
       - name: Generate code (Build Runner - low resources mode)
-        run: dart run build_runner build --delete-conflicting-outputs --low-resources-mode -j 2
+        run: dart run build_runner build --delete-conflicting-outputs --low-resources-mode
 
       - name: Build Debug APK
         run: flutter build apk --debug --android-skip-build-dependency-validation
