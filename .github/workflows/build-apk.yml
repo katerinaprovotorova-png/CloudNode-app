@@ -6,6 +6,8 @@ on:
 jobs:
   build-android-apk:
     runs-on: ubuntu-latest
+    timeout-minutes: 45 # Защита от зависания
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,14 +24,22 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Cache build_runner
+        uses: actions/cache@v4
+        with:
+          path: .dart_tool/build
+          key: build-runner-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            build-runner-${{ runner.os }}-
+
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate code (Build Runner)
-        run: dart run build_runner build --delete-conflicting-outputs
-
       - name: Generate translations
         run: dart run slang
+
+      - name: Generate code (Build Runner - low resources mode)
+        run: dart run build_runner build --delete-conflicting-outputs --low-resources-mode -j 2
 
       - name: Build Debug APK
         run: flutter build apk --debug --android-skip-build-dependency-validation
