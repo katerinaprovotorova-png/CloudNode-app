@@ -103,9 +103,7 @@ class IPCountryFlag extends HookConsumerWidget {
 
   final String? countryCode;
   final double size;
-
   final EdgeInsetsGeometry padding;
-
   final String? organization;
 
   @override
@@ -153,20 +151,19 @@ class OrgIconData {
   const OrgIconData(this.icon, this.color);
 }
 
-// Map of organization keywords to icon and color
-// ИСПРАВЛЕНО: Используем стандартные иконки Flutter, чтобы избежать ошибок версий simple_icons
+// ИСПРАВЛЕНО: Используются ТОЛЬКО проверенные, базовые иконки Flutter, которые существуют в 100% версий.
 const Map<String, OrgIconData> organizationData = {
   "cloudflare": OrgIconData(Icons.cloud, Colors.orange),
   "hetzner": OrgIconData(Icons.computer, Colors.deepOrange),
-  "ovh": OrgIconData(Icons.server, Colors.blue),
-  "azure": OrgIconData(Icons.cloud, Colors.blue),
+  "ovh": OrgIconData(Icons.dns, Colors.blue),
+  "azure": OrgIconData(Icons.cloud_done, Colors.blue),
   "amazon": OrgIconData(Icons.shopping_cart, Colors.amber),
   "oracle": OrgIconData(Icons.business, Colors.red),
   "fastly": OrgIconData(Icons.speed, Colors.red),
-  "digitalocean": OrgIconData(Icons.waves, Colors.blue),
+  "digitalocean": OrgIconData(Icons.water_drop, Colors.blue),
   "alibaba": OrgIconData(Icons.shopping_bag, Colors.orange),
   "google": OrgIconData(Icons.g_mobiledata, Colors.blue),
-  "starlink": OrgIconData(Icons.satellite_alt, Colors.grey),
+  "starlink": OrgIconData(Icons.satellite, Colors.grey),
 };
 
 class OrganisationFlag extends HookConsumerWidget {
